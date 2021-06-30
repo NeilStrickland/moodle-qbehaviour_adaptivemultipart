@@ -101,11 +101,15 @@ class qbehaviour_adaptivemultipart_part_result {
     /** @var bool if any errors occurred during processing. */
     public $errors;
 
-    public function __construct($partname, $rawfraction, $penalty, $errors = false) {
+    /** @var string an optional note about the result of grading. */
+    public $note;
+
+    public function __construct($partname, $rawfraction, $penalty, $errors = false, $note = '') {
         $this->partname    = $partname;
         $this->rawfraction = $rawfraction;
         $this->penalty     = $penalty;
         $this->errors      = $errors;
+	$this->note        = $note;
     }
 }
 
@@ -295,6 +299,9 @@ class qbehaviour_adaptivemultipart extends qbehaviour_adaptive {
             $currentfractions[$partname] = max($partscore->rawfraction - $currentpenalties[$partname],
                                                     $currentfractions[$partname]); // Current fraction never decreases.
             $pendingstep->set_behaviour_var('_fraction_' . $partname, $currentfractions[$partname]);
+	    if (isset($partscore->note) && $partscore->note) {
+		$pendingstep->set_behaviour_var('_note_' . $partname, '' . $partscore->note);
+	    }
         }
 
         if (empty($currentfractions)) {
